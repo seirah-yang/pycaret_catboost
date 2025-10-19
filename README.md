@@ -83,19 +83,21 @@
     
 ## 5. Results & Evaluation
   (1) Top3 compare model(n_select=3, sort='AUC')
-    ![table 1. top3 compare model] (http:// 이미지 링크)
+    ![table 1. top-3 compare model] (https://github.com/seirah-yang/pycaret_catboost/blob/main/top3_model.png)
 
-  (2) Catboost_model tunning Result
-    - Accuracy, AUC, Recall, Precision, F1, Kappa, MCC의 각 fold별 scores
-    ![graph 1. catboot tuning result] (http:// 이미지 링크)
-    ![table 2. catboot tuning result] (http:// 이미지 링크)
+  (2) Catboost blend model Result
+    ![table 2. catboost model(blend)] (https://github.com/seirah-yang/pycaret_catboost/blob/main/catboost_final(blend).png)
+  (3) Catboost_model tunning Result
+    - Accuracy, AUC, Recall, Precision, F1, Kappa, MCC의 fold별 scores
+    ![graph 1. catboost tuning result] (https://github.com/seirah-yang/pycaret_catboost/blob/main/catboot_tuningresult.png)
+    ![table 3. catboost tuning result] (https://github.com/seirah-yang/pycaret_catboost/blob/main/catboost_tuned.png)
  
 ## 6. Discution / Reflection
   [문제발생]
     - 모든 예측 결과가 '0'으로 출력 
-    ![img 1. Label Encoding 전](http:// 이미지 링크)
+    ![table 4. Label Encoding 전](https://github.com/seirah-yang/pycaret_catboost/blob/main/beforeLE.png)
 
-  [문제파악]
+  [원인파악]
     - gender(M,F)와 subscription_type(member,plus,vip)를 명목형 변수로인식하지만 Label Encoding 수행하지 않음 
     - 수치형 입력 요구시, 해당변수를 숫자로 변환하지 않고 문자열 유지, drop 처리
     - 즉, 모델이 수치형 입력만 요구할 경우 해당 변수를 제외하고 학습
@@ -104,12 +106,14 @@
     - gender(M:1,F:2), subscription_type(member:0,plus:1,vip:2)을 Label Encoding 수행하여 분석에 포함
     
   [문제해결]  
-    - 데이터 분포가 '고객 활동'만 보고 예측하는 과정에서 gender와 subscription_type을 포함함으로써 '고객 특성'을 모두 파악 가능
-    - 고객 유형별 행동 차이까지 고려 
+    - 데이터 분포가 '고객 활동'만 보고 예측하는 과정에서 gender와 subscription_type을 포함
     
   [결과]
-
-  ![img 1. Label Encoding 후](http:// 이미지 링크)
+    - 학습 시 gender, subscription_type이 포함되어 고객 유형과 행동 유형 모두 고려하여 분석 함
+    - Fold별 Accuracy, F1, Mean, SD score를 통해 학습이 안정적으로 이루어 짐을 확인
+    - 예측 결과가 '1'로 출력 되는 것을 확인
+    
+  ![table 5. Label Encoding 후](https://github.com/seirah-yang/pycaret_catboost/blob/main/after_LEpng)
      
 ## 7. Contributors / License
   양 소 라 (SORA YANG, Seirah) | RN, BSN, MSN | E-Mail: nftsgsrz3@gmail.com | Mobile: 010-7258-5942
