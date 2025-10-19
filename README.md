@@ -20,26 +20,27 @@
 ## 2. Data Description
 
 [데이터 출처]
-  
- Dacon Basic 해커톤 (2025.08.04 ~ 2025.09.30)
+
+  - Dacon Basic 해커톤 (2025.08.04 ~ 2025.09.30)
    
 [데이터 유형]
   
- 다중 분류(Multi-class Classification)
+  - 다중 분류(Multi-class Classification)
   
 [샘플 수]
   
- N = 578
+  - N = 578
   
 [데이터 분석 목적]
       
- 고객의 사용 행동 및 패턴을 기반으로 지원 필요도(support_needs) 예측을 통해 
-   
-  (1) 고객 이탈 방지(Customer Retention)
-  (2) 지원 리소스 최적화(Support Resource Allocation)
+  - 고객의 사용 행동 및 패턴을 기반으로 지원 필요도(support_needs) 예측을 통해
+     
+    (1) 고객 이탈 방지(Customer Retention)
+
+    (2) 지원 리소스 최적화(Support Resource Allocation) 하는 것을 목적으로 함 
 
 ## 3. Methodology
- 본 프로젝트는 [데이터 수집/전처리] → [결측치 처리] → [변수 인코딩] → [모델 학습] → [앙상블] → [성능평가] 순으로 수행 하였다. 
+  본 프로젝트는 [데이터 수집/전처리] → [결측치 처리] → [변수 인코딩] → [모델 학습] → [앙상블] → [성능평가] 순으로 수행 하였다. 
     
   (1) 데이터 수집 및 전처리 
     - 범주형 변수 인코딩 
@@ -52,8 +53,8 @@
   (6) 성능 평가 
   
 ## 4. Modeling & Techniques
- (1) [데이터 전처리]
-   - gender(M, F)와 subscription_type(member, plus, vip)을 명목변수로 변환하여 LabelEncoding으로 수치화
+  (1) [데이터 전처리]
+    - gender(M, F)와 subscription_type(member, plus, vip)을 명목변수로 변환하여 LabelEncoding으로 수치화
 
 ```bash
   train_df['gender'] = train_df['gender'].map({'M': 0, 'F': 1})
@@ -62,15 +63,15 @@
   test_df['subscription_type'] = test_df['subscription_type'].map({'member': 0, 'plus': 1, 'vip': 2})
 ```    
     
- (2) [불균형 조율]
-   - fix_imbalance=True 옵션 설정하여 SMOTE 적용
+  (2) [불균형 조율]
+    - fix_imbalance=True 옵션 설정하여 SMOTE 적용
 
- (3) [Pycaret]
-   - 상위 3개 모델 선정: compare_models()
-   - Blend_models()로 선정한 3개 모델 앙상블 
+  (3) [Pycaret]
+    - 상위 3개 모델 선정: compare_models()
+    - Blend_models()로 선정한 3개 모델 앙상블 
     
- (4) [K-means Clustering]
-   - 행동 특성이 비슷한 고객 그룹 정보 추가 하여 해석 및 예측
+  (4) [K-means Clustering]
+    - 행동 특성이 비슷한 고객 그룹 정보 추가 하여 해석 및 예측
 
 ```python
  from sklearn.cluster import KMeans
@@ -81,35 +82,34 @@
 ```
     
 ## 5. Results & Evaluation
-[성능지표]
- 1. Top3 compare model(n_select=3, sort='AUC')
-   ![table 1. top3 compare model] (http:// 이미지 링크)
+  (1) Top3 compare model(n_select=3, sort='AUC')
+    ![table 1. top3 compare model] (http:// 이미지 링크)
 
- 2. Catboost_model tunning Result
-  (1) Accuracy, AUC, Recall, Precision, F1, Kappa, MCC의 각 fold별 scores
-   ![graph 1. catboot tuning result] (http:// 이미지 링크)
-   ![table 2. catboot tuning result] (http:// 이미지 링크)
+  (2) Catboost_model tunning Result
+    - Accuracy, AUC, Recall, Precision, F1, Kappa, MCC의 각 fold별 scores
+    ![graph 1. catboot tuning result] (http:// 이미지 링크)
+    ![table 2. catboot tuning result] (http:// 이미지 링크)
  
 ## 6. Discution / Reflection
-[문제발생]
-  - 모든 예측 결과가 '0'으로 출력 
-![img 1. Label Encoding 전](http:// 이미지 링크)
+  [문제발생]
+    - 모든 예측 결과가 '0'으로 출력 
+    ![img 1. Label Encoding 전](http:// 이미지 링크)
 
-[문제파악]
-  - gender(M,F)와 subscription_type(member,plus,vip)를 명목형 변수로인식하지만 Label Encoding 수행하지 않음 
-  - 수치형 입력 요구시, 해당변수를 숫자로 변환하지 않고 문자열 유지, drop 처리
-  - 즉, 모델이 수치형 입력만 요구할 경우 해당 변수를 제외하고 학습
+  [문제파악]
+    - gender(M,F)와 subscription_type(member,plus,vip)를 명목형 변수로인식하지만 Label Encoding 수행하지 않음 
+    - 수치형 입력 요구시, 해당변수를 숫자로 변환하지 않고 문자열 유지, drop 처리
+    - 즉, 모델이 수치형 입력만 요구할 경우 해당 변수를 제외하고 학습
 
-[해결방법 탐색]
-  - gender(M:1,F:2), subscription_type(member:0,plus:1,vip:2)을 Label Encoding 수행하여 분석에 포함
+  [해결방법 탐색]
+    - gender(M:1,F:2), subscription_type(member:0,plus:1,vip:2)을 Label Encoding 수행하여 분석에 포함
     
-[문제해결]  
-  - 데이터 분포가 '고객 활동'만 보고 예측하는 과정에서 gender와 subscription_type을 포함함으로써 '고객 특성'을 모두 파악 가능
-  - 고객 유형별 행동 차이까지 고려 
+  [문제해결]  
+    - 데이터 분포가 '고객 활동'만 보고 예측하는 과정에서 gender와 subscription_type을 포함함으로써 '고객 특성'을 모두 파악 가능
+    - 고객 유형별 행동 차이까지 고려 
     
-[결과]
+  [결과]
 
-![img 1. Label Encoding 후](http:// 이미지 링크)
+  ![img 1. Label Encoding 후](http:// 이미지 링크)
      
 ## 7. Contributors / License
   양 소 라 (SORA YANG, Seirah) | RN, BSN, MSN | E-Mail: nftsgsrz3@gmail.com | Mobile: 010-7258-5942
@@ -117,7 +117,8 @@
     - Education experience : alpaco campus End-to-End AI developer master course (6m)
    
    💬 SNS: GitHub Profile 링크  |  [GitHub] (https://github.com/SeIRah)
-
+   
+---------------------------------------------------------------------------------------------------------------------------------------
 ## References
  1. wikidocs. (2025). PyCaret을 활용한 분류모델 개발. WikiDocs. https://wikidocs.net/207087
  2. DACON. (2023, July 17 – July 31). Wind Speed Prediction AI hackathon [Online competition]. DACON.   https://dacon.io/en/competitions/official/236126
