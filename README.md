@@ -43,23 +43,33 @@
   본 프로젝트는 [데이터 수집/전처리] → [결측치 처리] → [변수 인코딩] → [모델 학습] → [앙상블] → [성능평가] 순으로 수행 하였다. 
     
   (1) 데이터 수집 및 전처리 
+    
     - 범주형 변수 인코딩 
+    
     - 이상치 처리 
+    
     - 정규화  
+  
   (2) 결측치 확인 및 처리 
+  
   (3) 범주형 변수 인코딩(Label Encoding)
+  
   (4) 정규화 및 데이터 불균형 조정 
+  
   (5) 모델 튜닝, 학습 및 앙상블 
+  
   (6) 성능 평가 
   
 ## 4. Modeling & Techniques
-  (1) [데이터 전처리]
-    - gender(M, F)와 subscription_type(member, plus, vip)을 명목변수로 변환하여 LabelEncoding으로 수치화  
+ (1) [데이터 전처리]
+  
+   - gender(M, F)와 subscription_type(member, plus, vip)을 명목변수로 변환하여 LabelEncoding으로 수치화  
     
-  (2) [불균형 조율]
-    - fix_imbalance=True 옵션 설정하여 SMOTE 적용
+ (2) [불균형 조율]
+ 
+   - fix_imbalance=True 옵션 설정하여 SMOTE 적용
 
-  (3) [Pycaret]
+ (3) [Pycaret]
     
    - 상위 3개 모델 선정: compare_models()
     
@@ -67,7 +77,7 @@
     
    - tune_model()로 최적의 조합으로 catboost 모델 자동 탐색하여 하이퍼파라미터 조정 
     
-  (4) [K-means Clustering]
+ (4) [K-means Clustering]
     
    - 행동 특성이 비슷한 고객 그룹 정보 추가 하여 해석 및 예측
     
@@ -80,25 +90,30 @@
   ```
     
 ## 5. Results & Evaluation
-  (1) Top3 compare model(n_select=3, sort='AUC')
+ (1) Top3 compare model(n_select=3, sort='AUC')
+  
   ![table 1. top-3 compare model](https://github.com/seirah-yang/pycaret_catboost/blob/main/top3_model.png)
 
-  (2) Catboost blend model Result
+ (2) Catboost blend model Result
+  
   ![table 2. catboost model(blend)](https://github.com/seirah-yang/pycaret_catboost/blob/main/catboost_final(blend).png)
   
-  (3) Catboost_model tunning Result
+ (3) Catboost_model tunning Result
     
-    - Accuracy, AUC, Recall, Precision, F1, Kappa, MCC의 fold별 scores
+   - Accuracy, AUC, Recall, Precision, F1, Kappa, MCC의 fold별 scores
+ 
   ![graph 1. catboost tuning result](https://github.com/seirah-yang/pycaret_catboost/blob/main/catboot_tuningresult.png)
+  
   ![table 3. catboost tuning result](https://github.com/seirah-yang/pycaret_catboost/blob/main/catboost_tuned.png)
  
 ## 6. Discution / Reflection
-  [문제사항]
+ [문제사항]
     
   - 모든 예측 결과가 '0'으로 출력 
+ 
   ![table 4. Label Encoding 전](https://github.com/seirah-yang/pycaret_catboost/blob/main/beforeLE.png)
 
-  [원인파악]
+ [원인파악]
   
   - gender(M,F)와 subscription_type(member,plus,vip)를 명목형 변수로인식하지만 Label Encoding 수행하지 않음 
     
@@ -106,11 +121,11 @@
   
   - 즉, 모델이 수치형 입력만 요구할 경우 해당 변수를 제외하고 학습
 
-  [해결방안 탐색]
+ [해결방안 탐색]
     
   - gender(M:1,F:2), subscription_type(member:0,plus:1,vip:2)을 Label Encoding 수행하여 분석에 포함
     
-  [해결방안 적용]  
+ [해결방안 적용]  
     
   - 데이터 분포가 '고객 활동'만 보고 예측하는 과정에서 gender와 subscription_type을 포함
 
@@ -120,7 +135,7 @@
   test_df['gender'] = test_df['gender'].map({'M': 0, 'F': 1})
   test_df['subscription_type'] = test_df['subscription_type'].map({'member': 0, 'plus': 1, 'vip': 2})
 ```  
-  [결과]
+ [결과]
 
   - 학습 시 gender, subscription_type이 포함되어 고객 유형과 행동 유형 모두 고려하여 분석 함
     
@@ -128,7 +143,7 @@
     
   - 예측 결과가 '1'로 출력 되는 것을 확인
     
-  ![table 5. Label Encoding 후](https://github.com/seirah-yang/pycaret_catboost/blob/main/after_LEpng)
+ ![table 5. Label Encoding 후](https://github.com/seirah-yang/pycaret_catboost/blob/main/after_LEpng)
      
 ## 7. Contributors / License
   양 소 라 (SORA YANG, Seirah) | RN, BSN, MSN | E-Mail: nftsgsrz3@gmail.com | Mobile: 010-7258-5942
@@ -137,7 +152,7 @@
     
   - Education experience : alpaco campus End-to-End AI developer master course (6m)
    
-   💬 SNS: GitHub Profile 링크  |  [GitHub] (https://github.com/SeIRah)
+  💬 SNS: GitHub Profile 링크  |  [GitHub] (https://github.com/SeIRah)
    
 -------------------------------------------------------------------------------------------------
 ## References
