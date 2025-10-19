@@ -61,15 +61,15 @@
 
   (3) [Pycaret]
     
-    - 상위 3개 모델 선정: compare_models()
+   - 상위 3개 모델 선정: compare_models()
     
-    - Blend_models()로 선정한 3개 모델 앙상블 
+   - Blend_models()로 선정한 3개 모델 앙상블 
     
-    - tune_model()로 최적의 조합으로 catboost 모델 자동 탐색하여 하이퍼파라미터 조정 
+   - tune_model()로 최적의 조합으로 catboost 모델 자동 탐색하여 하이퍼파라미터 조정 
     
   (4) [K-means Clustering]
     
-    - 행동 특성이 비슷한 고객 그룹 정보 추가 하여 해석 및 예측
+   - 행동 특성이 비슷한 고객 그룹 정보 추가 하여 해석 및 예측
     
   ```python
    from sklearn.cluster import KMeans
@@ -95,24 +95,24 @@
 ## 6. Discution / Reflection
   [문제사항]
     
-    - 모든 예측 결과가 '0'으로 출력 
-    ![table 4. Label Encoding 전](https://github.com/seirah-yang/pycaret_catboost/blob/main/beforeLE.png)
+  - 모든 예측 결과가 '0'으로 출력 
+  ![table 4. Label Encoding 전](https://github.com/seirah-yang/pycaret_catboost/blob/main/beforeLE.png)
 
   [원인파악]
+  
+  - gender(M,F)와 subscription_type(member,plus,vip)를 명목형 변수로인식하지만 Label Encoding 수행하지 않음 
     
-    - gender(M,F)와 subscription_type(member,plus,vip)를 명목형 변수로인식하지만 Label Encoding 수행하지 않음 
-    
-    - 수치형 입력 요구시, 해당변수를 숫자로 변환하지 않고 문자열 유지, drop 처리
-    
-    - 즉, 모델이 수치형 입력만 요구할 경우 해당 변수를 제외하고 학습
+  - 수치형 입력 요구시, 해당변수를 숫자로 변환하지 않고 문자열 유지, drop 처리
+  
+  - 즉, 모델이 수치형 입력만 요구할 경우 해당 변수를 제외하고 학습
 
   [해결방안 탐색]
     
-    - gender(M:1,F:2), subscription_type(member:0,plus:1,vip:2)을 Label Encoding 수행하여 분석에 포함
+  - gender(M:1,F:2), subscription_type(member:0,plus:1,vip:2)을 Label Encoding 수행하여 분석에 포함
     
   [해결방안 적용]  
     
-    - 데이터 분포가 '고객 활동'만 보고 예측하는 과정에서 gender와 subscription_type을 포함
+  - 데이터 분포가 '고객 활동'만 보고 예측하는 과정에서 gender와 subscription_type을 포함
 
 ```bash
   train_df['gender'] = train_df['gender'].map({'M': 0, 'F': 1})
@@ -122,20 +122,20 @@
 ```  
   [결과]
 
-    - 학습 시 gender, subscription_type이 포함되어 고객 유형과 행동 유형 모두 고려하여 분석 함
+  - 학습 시 gender, subscription_type이 포함되어 고객 유형과 행동 유형 모두 고려하여 분석 함
     
-    - Fold별 Accuracy, F1, Mean, SD score를 통해 학습이 안정적으로 이루어 짐을 확인
+  - Fold별 Accuracy, F1, Mean, SD score를 통해 학습이 안정적으로 이루어 짐을 확인
     
-    - 예측 결과가 '1'로 출력 되는 것을 확인
+  - 예측 결과가 '1'로 출력 되는 것을 확인
     
   ![table 5. Label Encoding 후](https://github.com/seirah-yang/pycaret_catboost/blob/main/after_LEpng)
      
 ## 7. Contributors / License
   양 소 라 (SORA YANG, Seirah) | RN, BSN, MSN | E-Mail: nftsgsrz3@gmail.com | Mobile: 010-7258-5942
     
-    - JD : Oncology on Severance(Cancer center), CRC(NCC) mainly IIT & sub SIT, Data Management Intership(6m) 
+  - JD : Oncology on Severance(Cancer center), CRC(NCC) mainly IIT & sub SIT, Data Management Intership(6m) 
     
-    - Education experience : alpaco campus End-to-End AI developer master course (6m)
+  - Education experience : alpaco campus End-to-End AI developer master course (6m)
    
    💬 SNS: GitHub Profile 링크  |  [GitHub] (https://github.com/SeIRah)
    
