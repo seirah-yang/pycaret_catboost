@@ -146,13 +146,15 @@
  ![table 5. Label Encoding 후](https://github.com/seirah-yang/pycaret_catboost/blob/main/after_LEpng)
      
 ## 7. Contributors / License
-  양 소 라 (SORA YANG, Seirah) | RN, BSN, MSN | E-Mail: nftsgsrz3@gmail.com | Mobile: 010-7258-5942
+  양 소 라 (SORA YANG, Seirah) | RN, BSN, MSN  
     
   - JD : Oncology on Severance(Cancer center), CRC(NCC) mainly IIT & sub SIT, Data Management Intership(6m) 
     
   - Education experience : alpaco campus End-to-End AI developer master course (6m)
    
-  💬 SNS: GitHub Profile 링크  |  [GitHub] (https://github.com/SeIRah)
+  💬 SNS: GitHub Profile 링크  |  [GitHub](https://github.com/SeIRah)
+
+  💬 E-Mail: nftsgsrz3@gmail.com | Mobile: 010-7258-5942
    
 -------------------------------------------------------------------------------------------------
 ## References
