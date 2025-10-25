@@ -3,22 +3,24 @@
 고객 이용 행동과 계약 정보를 분석하여 지원이 필요한 정도를 나타내는 등급 분류 AI 알고리즘을 개발하고자 한다. 
 이를 위해 데이터(명목형 변수)의 연관성과 스피어만 상관계수의 특성을 확인 후, 이를 적용하여 상관관계를 예측한다.   
 
-## 1. Overview 
+## 1. 프로젝트 개요(Overview) 
 
 [목표]
   
- 고객의 지원 필요 수준을 예측하는 AI 알고리즘 개발
+고객 이용 행동과 계약 정보를 기반으로 지원 필요 수준(support_needs) 을 예측하는 AI 등급 분류 알고리즘 개발
   
 [세부 목표]
+  - 고객 이용 데이터의 명목형 변수(Label Encoding) 변환
   
- - k-Means cluster 파생변수 추가
-    
- - Pycaret AutoML 상위 3개 모델 선정
-    
- - Catboost를 blend model로 선정하여 전방모델은 2번 상위모델 3개로 배치하여 stacking
-
-## 2. Data Description
-
+	- Spearman 상관계수 분석을 통한 피처 간 연관성 파악
+	
+  - K-Means Clustering 파생 변수 추가로 행동 패턴 군집화
+	
+  - PyCaret AutoML을 통해 상위 3개 모델 자동 탐색
+	
+  - CatBoost를 블렌딩(Blending) 하여 최종 스태킹 모델 구성
+  
+## 2. 데이터 설명 (Data Description)
 [데이터 출처]
 
   - Dacon Basic 해커톤 (2025.08.04 ~ 2025.09.30)
@@ -31,74 +33,107 @@
   
   - N = 578
   
-[데이터 분석 목적]
+[분석 목적]
       
-  - 고객의 사용 행동 및 패턴을 기반으로 지원 필요도(support_needs) 예측을 통해
-     
+ 고객 행동 패턴 기반으로 지원 리소스 예측 및 최적화
+
+[분석 목표]
+
     (1) 고객 이탈 방지(Customer Retention)
 
     (2) 지원 리소스 최적화(Support Resource Allocation) 하는 것을 목적으로 함 
 
-## 3. Methodology
-  본 프로젝트는 [데이터 수집/전처리] → [결측치 처리] → [변수 인코딩] → [모델 학습] → [앙상블] → [성능평가] 순으로 수행 하였다. 
+## 3. 분석 프로세스 (Methodology)
+
+[데이터 수집] → [결측치 처리] → [명목형 변수 인코딩] → [정규성·등분산성 검정] → [ANOVA/사후분석] → [AutoML (PyCaret)] → [CatBoost 튜닝 & 블렌딩] → [성능 평가]
     
   (1) 데이터 수집 및 전처리 
     
-    - 범주형 변수 인코딩 
+    - Label Encoding 
     
-    - 이상치 처리 
-    
-    - 정규화  
+    - 이상치 처리 및 정규화
+
+    - 사용기술 : pandas, numpy
   
   (2) 결측치 확인 및 처리 
   
-  (3) 범주형 변수 인코딩(Label Encoding)
+    - 단일/다중 대체법 확인
+
+    - 사용기술 : pandas
   
-  (4) 정규화 및 데이터 불균형 조정 
-  
-  (5) 모델 튜닝, 학습 및 앙상블 
-  
-  (6) 성능 평가 
+  (3) 명목형 변수 인코딩
+
+    - gender, subscription_type → 수치형 변환
+
+    - 사용기술 : LabelEncoder
+      
+  (4) 통계검정
+
+    - Shapiro–Wilk, Levene Test
+
+    - 사용기술 : scipy.stats
+      
+  (5) 분산분석 및 사후분석
+
+    - ANOVA / Welch / Kruskal–Wallis
+
+    - Tukey HSD, Games–Howell, Dunn
+
+    - 사용기술 : pingouin, scikit-posthocs
+      
+  (6) 모델링
+
+    - PyCaret AutoML
+
+    - 사용기술 : pycaret.classification
+      
+  (3) K-Means Cluster
+
+    - 파생변수의 군집화 
+    
+    - 사용기술 : sklearn.cluster
+
   
 ## 4. Modeling & Techniques
- (1) [데이터 전처리]
-  
-   - gender(M, F)와 subscription_type(member, plus, vip)을 명목변수로 변환하여 LabelEncoding으로 수치화  
+ 1) Label Encoding
+```python  
+    train_df['gender'] = train_df['gender'].map({'M': 0, 'F': 1})
+    train_df['subscription_type'] = train_df['subscription_type'].map({'member': 0, 'plus': 1, 'vip': 2})
     
- (2) [불균형 조율]
- 
-   - fix_imbalance=True 옵션 설정하여 SMOTE 적용
+    test_df['gender'] = test_df['gender'].map({'M': 0, 'F': 1})
+    test_df['subscription_type'] = test_df['subscription_type'].map({'member': 0, 'plus': 1, 'vip': 2}) 
+```
 
- (3) [Pycaret]
-    
-   - 상위 3개 모델 선정: compare_models()
-    
-   - Blend_models()로 선정한 3개 모델 앙상블 
-    
-   - tune_model()로 최적의 조합으로 catboost 모델 자동 탐색하여 하이퍼파라미터 조정 
-    
- (4) [K-means Clustering]
-    
-   - 행동 특성이 비슷한 고객 그룹 정보 추가 하여 해석 및 예측
-    
-  ```python
+ 2) K-Means Clustering
+```python
    from sklearn.cluster import KMeans
-  
-   kmeans = KMeans(n_clusters=3, random_state=42)
-   train_df['cluster'] = kmeans.fit_predict(train_df[['age','tenure','frequent','payment_interval','contract_length','after_interaction']])
-         test_df['cluster'] = kmeans.predict(test_df[['age','tenure','frequent','payment_interval','contract_length','after_interaction']])
-  ```
+
+    kmeans = KMeans(n_clusters=3, random_state=42)
+    train_df['cluster'] = kmeans.fit_predict(train_df[['age','tenure','frequent','payment_interval','contract_length','after_interaction']])
+    test_df['cluster'] = kmeans.predict(test_df[['age','tenure','frequent','payment_interval','contract_length','after_interaction']])
+```
+
+ 3)  CatBoost 블렌딩 모델
+    (1)	상위 3개 모델 기반으로 CatBoost를 중심으로 블렌딩
+
+	  (2)	5-Fold Cross Validation 수행
+
+	  (3)	Accuracy, AUC, Recall, Precision, F1, Kappa, MCC 평가
+    
+
     
 ## 5. Results & Evaluation
  (1) Top3 compare model(n_select=3, sort='AUC')
   
   ![table 1. top-3 compare model](https://github.com/seirah-yang/pycaret_catboost/blob/main/top3_model.png)
 
- (2) Catboost blend model Result
+ (2) 통계분석 결과 
+ 
+ (3) Catboost blend model Result
   
   ![table 2. catboost model(blend)](https://github.com/seirah-yang/pycaret_catboost/blob/main/catboost_final(blend).png)
   
- (3) Catboost_model tunning Result
+ (4) Catboost_model tunning Result
     
    - Accuracy, AUC, Recall, Precision, F1, Kappa, MCC의 fold별 scores
  
@@ -109,17 +144,18 @@
 ## 6. Discution / Reflection
  [문제사항]
     
-  - 모든 예측 결과가 '0'으로 출력 
+  - 모든 예측 결과가 '0'으로 출력됨
+    → 모델이 문자열형 변수를 학습하지 못함 
  
   ![table 4. Label Encoding 전](https://github.com/seirah-yang/pycaret_catboost/blob/main/beforeLE.png)
 
  [원인파악]
   
-  - gender(M,F)와 subscription_type(member,plus,vip)를 명목형 변수로인식하지만 Label Encoding 수행하지 않음 
+  - gender / subscription_type이 문자열 상태로 남아 PyCaret 내부에서 자동 제외됨
+    → feature loss 발생
     
   - 수치형 입력 요구시, 해당변수를 숫자로 변환하지 않고 문자열 유지, drop 처리
-  
-  - 즉, 모델이 수치형 입력만 요구할 경우 해당 변수를 제외하고 학습
+    → 모델이 수치형 입력만 요구할 경우 해당 변수를 제외하고 학습
 
  [해결방안 탐색]
     
@@ -137,27 +173,29 @@
 ```  
  [결과]
 
-  - 학습 시 gender, subscription_type이 포함되어 고객 유형과 행동 유형 모두 고려하여 분석 함
+  - 학습 시 gender, subscription_type이 포함되어 모델이 고객 행동 + 속성 모두 반영
     
   - Fold별 Accuracy, F1, Mean, SD score를 통해 학습이 안정적으로 이루어 짐을 확인
     
-  - 예측 결과가 '1'로 출력 되는 것을 확인
+  - 예측값이 다양하게 생성되며, fold별 Accuracy와 F1 안정화
     
  ![table 5. Label Encoding 후](https://github.com/seirah-yang/pycaret_catboost/blob/main/after_LEpng)
      
-## 7. Contributors / License
-  양 소 라 (SORA YANG, Seirah) | RN, BSN, MSN  
+## 7. Author
+양 소 라 (SORA YANG, Seirah) | RN, BSN, MSN  
+AI Developer Bootcamp @ Alpaco | Clinical Data Analyst Trainee
     
-  - JD : Oncology on Severance(Cancer center), CRC(NCC) mainly IIT & sub SIT, Data Management Intership(6m) 
+Oncology on Severance(Cancer center), CRC(NCC) mainly Data Management Intership(6m) 
     
-  - Education experience : alpaco campus End-to-End AI developer master course (6m)
+Education experience : alpaco campus End-to-End AI developer master course (6m)
    
   💬 SNS: GitHub Profile 링크  |  [GitHub](https://github.com/SeIRah)
 
   💬 E-Mail: nftsgsrz3@gmail.com | Mobile: 010-7258-5942
    
--------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
 ## References
- 1. wikidocs. (2025). PyCaret을 활용한 분류모델 개발. WikiDocs. https://wikidocs.net/207087
- 2. DACON. (2023, July 17 – July 31). Wind Speed Prediction AI hackathon [Online competition]. DACON.   https://dacon.io/en/competitions/official/236126
- 3. Dacon. (2025, August 4 – September 30). *Basic Customer Support Level Classification: Find Customers Who Need Help!* [Online competition]. Dacon. https://dacon.io/competitions/official/236214
+	1.	wikidocs. (2025). PyCaret을 활용한 분류모델 개발. https://wikidocs.net/207087
+	2.	DACON. (2025, August 4 – September 30). Basic Customer Support Level Classification. https://dacon.io/competitions/official/236214
+	3.	Abdi, H., & Williams, L. J. (2010). Tukey’s HSD Test. In Encyclopedia of Research Design.
+	4.	Montgomery, D. C. (2019). Design and Analysis of Experiments. Wiley.
