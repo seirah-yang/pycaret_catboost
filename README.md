@@ -12,7 +12,7 @@
 [세부 목표]
   - 고객 이용 데이터의 명목형 변수(Label Encoding) 변환
   
-	- Spearman 상관계수 분석을 통한 피처 간 연관성 파악
+  - Spearman 상관계수 분석을 통한 피처 간 연관성 파악
 	
   - K-Means Clustering 파생 변수 추가로 행동 패턴 군집화
 	
